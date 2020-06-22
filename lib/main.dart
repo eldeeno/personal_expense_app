@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-
+// Model imports
+import './models/transaction.dart';
 // widget imports
-import './widgets/user_transactions.dart';
+import './widgets/transaction_list.dart';
+import './widgets/new_transaction.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,19 +17,65 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Transaction> _userTransactions = [
+    Transaction(
+      id: 't1',
+      title: 'Nike Shoes',
+      amount: 2500,
+      date: DateTime.now(),
+    ),
+    Transaction(
+      id: 't2',
+      title: 'Marks and spencer shirt',
+      amount: 7000,
+      date: DateTime.now(),
+    ),
+    Transaction(
+      id: 't3',
+      title: 'Versace Watch',
+      amount: 25000,
+      date: DateTime.now(),
+    ),
+  ];
+
+  void _addNewTransaction(String newTitle, double newAmount) {
+    final newTx = Transaction(
+        title: newTitle,
+        amount: newAmount,
+        date: DateTime.now(),
+        id: DateTime.now().toString());
+
+    setState(() {
+      _userTransactions.add(newTx);
+    });
+  }
+
+  void _showAddNewTx(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return NewTransaction(_addNewTransaction);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text('Flutter App'),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.add), onPressed: () {}),
+            IconButton(icon: Icon(Icons.add), onPressed:() => _showAddNewTx(context)),
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton(
-          onPressed: null,
+          onPressed: () => _showAddNewTx(context),
           child: Icon(Icons.add),
         ),
         body: SingleChildScrollView(
@@ -42,7 +90,7 @@ class MyHomePage extends StatelessWidget {
                   elevation: 5,
                 ),
               ),
-              UserTransaction(),
+              TransactionList(_userTransactions),
             ],
           ),
         ));
